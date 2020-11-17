@@ -3,7 +3,7 @@
 
 class Debugger {
 private:
-    static Debugger* _Instance;
+    static Debugger* Instance;
     Debugger();
     ~Debugger();
     std::string GetTimeString();
