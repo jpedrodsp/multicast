@@ -1,7 +1,7 @@
 #!/bin/bash
 BUILD_DIR="$(pwd)/build"
 
-mkdir BUILD_DIR
+mkdir $BUILD_DIR
 
 # Build server
 echo "Building server executable..."
