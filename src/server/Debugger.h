@@ -10,4 +10,4 @@ private:
 public:
     static Debugger& Get();
     void Log(std::string text);
-}
+};
