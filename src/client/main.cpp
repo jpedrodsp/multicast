@@ -2,7 +2,6 @@
 
 int main(int argc, char const *argv[])
 {
-    auto& d = Debugger::Get();
-    d.Log("Starting client application.");
+    Debugger::Get().Log("Starting client application.");
     return 0;
 }
