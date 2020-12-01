@@ -19,6 +19,7 @@ def multicast_ping_retrieve_id():
     bytes_sent = pingsock.sendto(b'PING', multicast_pingaddress)
     server_id = 1
     msg_count = 0
+    responded = []
     while True:
         try:
             recv_message, sender_address = pingsock.recvfrom(multicast.MULTICAST_BUFFER_SIZE_BYTES)
@@ -26,6 +27,7 @@ def multicast_ping_retrieve_id():
                 msg_count += 1
                 received_id = int(recv_message.decode("utf-8"))
                 utils.log('Response from ID: {}'.format(recv_message))
+                responded.append(received_id)
                 if received_id >= server_id:
                     server_id = received_id + 1
         except socket.timeout:
@@ -33,7 +35,7 @@ def multicast_ping_retrieve_id():
                 utils.log("ERROR: No ping response received. Please try again.")
             break
     pingsock.close()
-    return server_id
+    return server_id, responded
 
 def multicast_ping_respond(server_id):
     utils.log("Preparing responding listening socket for server {}...".format(server_id))
@@ -51,12 +53,18 @@ def multicast_ping_respond(server_id):
             id_bytestr = str(server_id).encode("utf-8")
             sent = sock.sendto(id_bytestr, client_address)
 
-def multicast_should_respond_expression():
-    return True
+def multicast_should_respond_expression(server_id):
+    __server_id, responded = multicast_ping_retrieve_id()
+    utils.log("Servers responded: {}".format(responded))
+    responded.sort()
+    if server_id in responded:
+        if responded.index(server_id) == 0:
+            return True
+    return False
 
 if __name__ == "__main__":
     utils.log("Initializing and retrieving server id...")
-    server_id = multicast_ping_retrieve_id()
+    server_id, responded = multicast_ping_retrieve_id()
     if server_id == None:
         utils.log("Failed to define server id")
         exit(1)
@@ -82,7 +90,7 @@ if __name__ == "__main__":
         recv_message, client_address = sock.recvfrom(multicast.MULTICAST_BUFFER_SIZE_BYTES)
         utils.log("Received message from [{}]: {}".format(client_address, recv_message))
         # Check with other servers who will respond the requisition
-        should_respond = multicast_should_respond_expression()
+        should_respond = multicast_should_respond_expression(server_id)
         if should_respond:
             utils.log("Responding expression calculation...")
             expression = recv_message.decode("utf-8")
