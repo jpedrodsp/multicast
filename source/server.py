@@ -16,7 +16,7 @@ def multicast_ping_retrieve_id():
     msg_count = 0
     while True:
         try:
-            recv_message, server_address = pingsock.recvfrom(multicast.MULTICAST_BUFFER_SIZE_BYTES)
+            recv_message, sender_address = pingsock.recvfrom(multicast.MULTICAST_BUFFER_SIZE_BYTES)
             if recv_message:
                 msg_count += 1
                 received_id = int(recv_message.decode("utf-8"))
