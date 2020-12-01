@@ -1,7 +1,7 @@
-# socket_multicast_sender.py
 import socket
 import struct
 import sys
+
 import multicast
 import utils
 
