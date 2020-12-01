@@ -12,7 +12,7 @@ import time
 
 def multicast_ping_retrieve_id():
     pingsock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    pingsock.settimeout(1)                                                  # Timeout in seconds
+    pingsock.settimeout(0.5)                                                  # Timeout in seconds
     ttl = struct.pack('b', 1)                                               # Set TTL to 1 hop (limits the network reach to local-only)
     pingsock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)    # Define socket options
     multicast_pingaddress = (multicast.MULTICAST_GROUP, multicast.MULTICAST_PORT_PING)
@@ -75,7 +75,8 @@ if __name__ == "__main__":
 
     # Create the respond socket
     utils.log("Creating ping responding socket...")
-    thread = threading.Thread(target=multicast_ping_respond, args=(server_id))
+    ping_responding_thread = threading.Thread(target=multicast_ping_respond, args=[server_id])
+    ping_responding_thread.start()
 
     # Create the UDP socket and bind it to network interface
     utils.log("Creating expressions socket...")
@@ -99,3 +100,5 @@ if __name__ == "__main__":
             sock.sendto(str(solved_data).encode("utf-8"), client_address)
         else:
             utils.log("Ignoring expression calculation...")
+    
+    ping_responding_thread.stop()
