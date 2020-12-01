@@ -1,8 +1,3 @@
 # Multicast
 
-## Description
-
-## Usage
-
-Client.py
-Server.py
+Please see `docs/relatorio.pdf` for more information.
